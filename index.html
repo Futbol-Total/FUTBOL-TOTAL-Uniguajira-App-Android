@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="img/logo_3-removebg-preview.png" type="image/png">
+    <title>Futbol Total - Login</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Contenedor del formulario -->
+        <div class="login-container">
+            <div class="logo-container">
+                <h1>FUTBOL TOTAL</h1>
+                <img src="img/logo_3-removebg-preview.png" alt="Logo Futbol Total">
+            </div>
+            <div class="form-container">
+                <form class="login-form" id="login-form">
+                    <label for="username">USUARIO</label>
+                    <input type="email" id="username" placeholder="Ingresa tu usuario (email)" required>
+                    
+                    <label for="password">CONTRASEÑA</label>
+                    <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
+                    
+                    <div class="checkbox-container">
+                        <label>
+                            <input type="checkbox" id="mostrar-contrasena">
+                            Mostrar contraseña
+                        </label>
+                        <label>
+                            <input type="checkbox" id="recordar-contrasena">
+                            Recordar contraseña
+                        </label>
+                    </div>
+                    
+                    <button type="submit" id="login-button">LOGIN</button>
+                </form>
+                <div class="extra-options">
+                    <a href="#" class="forgot-password" id="forgot-password">¿Olvidaste la contraseña?</a>
+                    <a href="#" class="register" id="open-register-modal">Registrarte</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor para opciones adicionales -->
+        <div class="social-login-container">
+            <h2>Inicios Sesión</h2>
+            <button id="login-google" class="social-login google">Iniciar sesión con Google</button>
+            <button id="login-phone" class="social-login phone">Iniciar sesión con Número de Teléfono</button>
+            <button id="login-facebook" class="social-login facebook">Iniciar sesión con Facebook</button>
+        </div>
+    </div>
+
+    <!-- Modal de ¿Olvidaste tu contraseña? -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-content">
+            <!-- Botón de cerrar -->
+            <span id="close-forgot-password" class="close-button">&times;</span>
+            <!-- Logo del modal -->
+            <div class="logo-container">
+                <img src="img/logo_3-removebg-preview.png" alt="Logo Futbol Total" class="modal-logo">
+            </div>
+            <h2>Recuperar Contraseña</h2>
+            <form id="forgot-password-form">
+                <label for="recovery-email">Ingresa tu correo electrónico</label>
+                <input type="email" id="recovery-email" placeholder="Correo electrónico" required>
+                <button type="submit">Enviar</button>
+            </form>
+            <!-- Mensaje de éxito o error -->
+            <p id="reset-password-message"></p>
+        </div>
+    </div>
+
+    <!-- Modal de Registro -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-register" class="close-button">&times;</span>
+            <div class="logo-container">
+                <img src="img/logo_3-removebg-preview.png" alt="Logo Futbol Total" class="modal-logo">
+            </div>
+            <h2>Registro</h2>
+            <form id="register-form">
+                <label for="register-email">Correo Electrónico</label>
+                <input type="email" id="register-email" placeholder="Correo electrónico" required>
+                <label for="register-password">Contraseña</label>
+                <input type="password" id="register-password" placeholder="Contraseña" required>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Authentication y lógica -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, sendPasswordResetEmail, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMFTlJxZdDGQ0IV0skUI6ozgPGxLYhsDg",
+            authDomain: "futbol-total-b4166.firebaseapp.com",
+            projectId: "futbol-total-b4166",
+            storageBucket: "futbol-total-b4166.appspot.com",
+            messagingSenderId: "510814548258",
+            appId: "1:510814548258:web:a3c8599e36c621bdfd757b",
+            measurementId: "G-T0J7Q4S9YP"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Abrir/Cerrar modales
+        document.getElementById('forgot-password').addEventListener('click', () => openModal('forgot-password-modal'));
+        document.getElementById('close-forgot-password').addEventListener('click', () => closeModal('forgot-password-modal'));
+
+        document.getElementById('open-register-modal').addEventListener('click', () => openModal('register-modal'));
+        document.getElementById('close-register').addEventListener('click', () => closeModal('register-modal'));
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Lógica para enviar el correo de restablecimiento de contraseña
+        document.getElementById('forgot-password-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('recovery-email').value;
+            const messageElement = document.getElementById('reset-password-message');
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                messageElement.textContent = "Correo de restablecimiento enviado. Revisa tu bandeja de entrada.";
+                messageElement.style.color = "green";
+            } catch (error) {
+                console.error("Error al enviar el correo de restablecimiento:", error);
+                messageElement.textContent = "Error al enviar el correo. Intenta nuevamente.";
+                messageElement.style.color = "red";
+            }
+        });
+
+        // Manejo de inicio de sesión con Google
+        const googleProvider = new GoogleAuthProvider();
+        document.getElementById('login-google').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                document.getElementById('username').value = user.email;
+                document.getElementById('password').value = "GoogleLogin";
+            } catch (error) {
+                console.error('Error en el inicio de sesión con Google:', error);
+                alert('Error al iniciar sesión con Google: ' + error.message);
+            }
+        });
+
+        // Manejo de inicio de sesión con Facebook
+        const facebookProvider = new FacebookAuthProvider();
+        document.getElementById('login-facebook').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, facebookProvider);
+                const user = result.user;
+                document.getElementById('username').value = user.email;
+                document.getElementById('password').value = "FacebookLogin";
+            } catch (error) {
+                console.error('Error en el inicio de sesión con Facebook:', error);
+                alert('Error al iniciar sesión con Facebook: ' + error.message);
+            }
+        });
+
+        // Manejo de inicio de sesión con teléfono
+        document.getElementById('login-phone').addEventListener('click', async () => {
+            try {
+                const phoneNumber = prompt("Ingresa tu número de teléfono:");
+                const appVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
+                const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+                const code = prompt('Ingresa el código que te llegó por SMS');
+                const result = await confirmationResult.confirm(code);
+                const user = result.user;
+                document.getElementById('username').value = user.phoneNumber;
+                document.getElementById('password').value = "PhoneLogin";
+            } catch (error) {
+                console.error('Error en el inicio de sesión con teléfono:', error);
+                alert('Error al iniciar sesión con teléfono: ' + error.message);
+            }
+        });
+
+        // Redirección solo para el formulario de login tradicional
+        document.getElementById('login-button').addEventListener('click', (event) => {
+            event.preventDefault();
+            window.location.href = 'pantalla de carga.html';
+        });
+
+        // Mostrar u ocultar contraseña
+        document.getElementById('mostrar-contrasena').addEventListener('change', (event) => {
+            const passwordInput = document.getElementById('password');
+            passwordInput.type = event.target.checked ? 'text' : 'password';
+        });
+
+        // Recordar contraseña
+        document.getElementById('recordar-contrasena').addEventListener('change', (event) => {
+            if (event.target.checked) {
+                localStorage.setItem('username', document.getElementById('username').value);
+                localStorage.setItem('password', document.getElementById('password').value);
+            } else {
+                localStorage.removeItem('username');
+                localStorage.removeItem('password');
+            }
+        });
+
+        // Autocompletar si existen datos en el almacenamiento local
+        window.onload = () => {
+            if (localStorage.getItem('username') && localStorage.getItem('password')) {
+                document.getElementById('username').value = localStorage.getItem('username');
+                document.getElementById('password').value = localStorage.getItem('password');
+            }
+        };
+    </script>
+</body>
+</html>

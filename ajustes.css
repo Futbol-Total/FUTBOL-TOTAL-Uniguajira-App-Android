@@ -1,0 +1,143 @@
+body {
+    font-family: 'Noto Serif Bengali', serif;
+    background-color: #0c0c1f; /* Color de fondo mejorado */
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.ajustes-container {
+    background: linear-gradient(145deg, #1e1e2d, #292942); /* Fondo con gradiente */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
+    transition: all 0.3s ease;
+}
+
+.ajustes-container:hover {
+    transform: scale(1.02); /* Efecto de hover suave */
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Alinea elementos a los lados */
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.back-icon i {
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.profile-info {
+    margin-bottom: 25px;
+}
+
+.profile-info img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    transition: transform 0.3s ease; /* Efecto al pasar por encima */
+}
+
+.profile-info img:hover {
+    transform: scale(1.1); /* Efecto de zoom */
+}
+
+.profile-info h2 {
+    margin: 10px 0;
+    color: #68cc8f;
+}
+
+.form-container {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    font-weight: 500;
+    color: #ffffff00;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #242439;
+    color: #FFFFFF;
+}
+
+button {
+    background: linear-gradient(145deg, #83326f, #68cc8f); /* Fondo con gradiente */
+    border: none;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 80px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(145deg, #ff79d9, #ff407a); /* Cambio de color suave */
+}
+
+#language-switch-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 17px;
+}
+
+#toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+    from { bottom: 0; opacity: 0; }
+    to { bottom: 30px; opacity: 1; }
+}
+
+@keyframes fadeout {
+    from { bottom: 30px; opacity: 1; }
+    to { bottom: 0; opacity: 0; }
+}
