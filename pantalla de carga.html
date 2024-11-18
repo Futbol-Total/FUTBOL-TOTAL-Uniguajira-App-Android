@@ -9,31 +9,22 @@
 </head>
 <body>
     <div class="container">
-        <img src="img/logo_3-removebg-preview.png" alt="a sunrise over a mountain range" />
-        <h1>By Oscar Vega </h1>
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+        <div class="progress-circle">
+            <img src="img/logo_3-removebg-preview.png" alt="Logo" class="logo" />
+            <svg class="circle" viewBox="0 0 100 100">
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#4CAF50" />
+                        <stop offset="50%" stop-color="#FFEB3B" />
+                        <stop offset="100%" stop-color="#F44336" />
+                    </linearGradient>
+                </defs>
+                <circle class="background" cx="50" cy="50" r="45" />
+                <circle class="progress" cx="50" cy="50" r="45" />
+            </svg>
         </div>
-        <div id="progress-text">0%</div>
+        <div id="progress-text" class="pulse-text">0%</div>
     </div>
-
-    <script>
-        var progressBar = document.getElementById('progress-bar');
-        var progressText = document.getElementById('progress-text');
-        var totalTime = 20000; // 20 segundos
-        var interval = 100; // Actualizar cada 100ms
-        var progress = 0;
-
-        var timer = setInterval(function() {
-            progress += (interval / totalTime) * 100;
-            progressBar.style.width = progress + '%';
-            progressText.textContent = Math.round(progress) + '%';
-
-            if (progress >= 100) {
-                clearInterval(timer);
-                window.location.href = 'loguin.html';
-            }
-        }, interval);
-    </script>
+    <script src="cargando.js"></script>
 </body>
 </html>
