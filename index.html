@@ -47,9 +47,7 @@
         <!-- Modal de ¿Olvidaste tu contraseña? -->
         <div id="forgot-password-modal" class="modal">
             <div class="modal-content">
-                <!-- Botón de cerrar -->
                 <span id="close-forgot-password" class="close-button">&times;</span>
-                <!-- Logo del modal -->
                 <div class="logo-container">
                     <img src="img/logo_3-removebg-preview.png" alt="Logo Futbol Total" class="modal-logo">
                 </div>
@@ -59,7 +57,6 @@
                     <input type="email" id="recovery-email" placeholder="Correo electrónico" required>
                     <button type="submit">Enviar</button>
                 </form>
-                <!-- Mensaje de éxito o error -->
                 <p id="reset-password-message"></p>
             </div>
         </div>
@@ -79,7 +76,6 @@
                     <input type="password" id="register-password" placeholder="Contraseña" required>
                     <button type="submit">Registrar</button>
                 </form>
-                <!-- Mensaje de éxito o error -->
                 <p id="register-message"></p>
             </div>
         </div>
@@ -108,7 +104,20 @@
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
 
-            // Abrir/Cerrar modales
+            // Función para verificar si el usuario existe localmente
+            function isUserLocal(email, password) {
+                const storedEmail = localStorage.getItem("username");
+                const storedPassword = localStorage.getItem("password");
+                return storedEmail === email && storedPassword === password;
+            }
+
+            // Función para guardar el usuario localmente
+            function saveUserLocal(email, password) {
+                localStorage.setItem("username", email);
+                localStorage.setItem("password", password);
+            }
+
+            // Abrir y cerrar modales
             document.getElementById('forgot-password').addEventListener('click', () => openModal('forgot-password-modal'));
             document.getElementById('close-forgot-password').addEventListener('click', () => closeModal('forgot-password-modal'));
 
@@ -127,30 +136,32 @@
             document.getElementById('register-form').addEventListener('submit', async (event) => {
                 event.preventDefault();
 
-                // Obtener valores del formulario
                 const email = document.getElementById('register-email').value;
                 const password = document.getElementById('register-password').value;
                 const messageElement = document.getElementById('register-message');
 
+                // Verificar si el usuario ya existe localmente
+                if (isUserLocal(email, password)) {
+                    messageElement.textContent = "El usuario ya existe localmente.";
+                    messageElement.style.color = "red";
+                    return;
+                }
+
                 try {
-                    // Crear un nuevo usuario con Firebase Authentication
+                    // Guardar el usuario localmente
+                    saveUserLocal(email, password);
+
+                    // Crear el usuario en Firebase
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    console.log("Usuario registrado:", userCredential.user);
+                    console.log("Usuario registrado en Firebase:", userCredential.user);
 
-                    // Guardar datos en localStorage
-                    localStorage.setItem('username', email);
-                    localStorage.setItem('password', password);
-
-                    // Mostrar mensaje de éxito
                     messageElement.textContent = "Usuario registrado exitosamente.";
                     messageElement.style.color = "green";
-
-                    // Cerrar el modal después de registrar
                     setTimeout(() => closeModal('register-modal'), 2000);
                 } catch (error) {
-                    console.error("Error al registrar usuario:", error);
+                    console.error("Error al registrar usuario en Firebase:", error);
 
-                    // Manejar errores de registro
+                    // Manejo de errores de Firebase
                     switch (error.code) {
                         case "auth/email-already-in-use":
                             messageElement.textContent = "El correo ya está en uso.";
@@ -168,56 +179,33 @@
                 }
             });
 
-            // Restablecimiento de contraseña
-            document.getElementById('forgot-password-form').addEventListener('submit', async (event) => {
-                event.preventDefault();
-
-                // Obtener correo del formulario
-                const email = document.getElementById('recovery-email').value;
-                const messageElement = document.getElementById('reset-password-message');
-
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    messageElement.textContent = "Correo de restablecimiento enviado. Revisa tu bandeja de entrada.";
-                    messageElement.style.color = "green";
-                } catch (error) {
-                    console.error("Error al enviar el correo de restablecimiento:", error);
-
-                    switch (error.code) {
-                        case "auth/user-not-found":
-                            messageElement.textContent = "No se encontró un usuario con ese correo.";
-                            break;
-                        case "auth/invalid-email":
-                            messageElement.textContent = "El formato del correo no es válido.";
-                            break;
-                        default:
-                            messageElement.textContent = "Ocurrió un error. Intenta nuevamente.";
-                    }
-                    messageElement.style.color = "red";
-                }
-            });
-
             // Login de usuarios
             document.getElementById('login-button').addEventListener('click', async (event) => {
                 event.preventDefault();
 
-                // Obtener valores del formulario
                 const email = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
 
-                try {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    console.log("Usuario autenticado:", userCredential.user);
+                // Verificar si el usuario existe localmente primero
+                if (!isUserLocal(email, password)) {
+                    alert("Usuario no encontrado localmente o contraseña incorrecta.");
+                    return;
+                }
 
-                    // Redireccionar a la pantalla de carga
+                try {
+                    // Autenticar con Firebase
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    console.log("Usuario autenticado en Firebase:", userCredential.user);
+
+                    // Redirigir a la página de carga
                     window.location.href = 'pantalla de carga.html';
                 } catch (error) {
-                    console.error("Error al iniciar sesión:", error);
-                    alert("Credenciales incorrectas. Intenta nuevamente.");
+                    console.error("Error al iniciar sesión en Firebase:", error);
+                    alert("Error al iniciar sesión en Firebase. Intenta nuevamente.");
                 }
             });
 
-            // Mostrar u ocultar contraseña
+            // Mostrar/Ocultar contraseña
             document.getElementById('mostrar-contrasena').addEventListener('change', (event) => {
                 const passwordInput = document.getElementById('password');
                 passwordInput.type = event.target.checked ? 'text' : 'password';
@@ -226,8 +214,9 @@
             // Recordar contraseña
             document.getElementById('recordar-contrasena').addEventListener('change', (event) => {
                 if (event.target.checked) {
-                    localStorage.setItem('username', document.getElementById('username').value);
-                    localStorage.setItem('password', document.getElementById('password').value);
+                    const email = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    saveUserLocal(email, password);
                 } else {
                     localStorage.removeItem('username');
                     localStorage.removeItem('password');
