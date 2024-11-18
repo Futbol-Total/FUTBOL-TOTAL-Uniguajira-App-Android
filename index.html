@@ -143,20 +143,6 @@
             }
         });
 
-        // Manejo de inicio de sesión con Google
-        const googleProvider = new GoogleAuthProvider();
-        document.getElementById('login-google').addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                document.getElementById('username').value = user.email;
-                document.getElementById('password').value = "GoogleLogin";
-            } catch (error) {
-                console.error('Error en el inicio de sesión con Google:', error);
-                alert('Error al iniciar sesión con Google: ' + error.message);
-            }
-        });
-
         // Manejo de inicio de sesión con Facebook
         const facebookProvider = new FacebookAuthProvider();
         document.getElementById('login-facebook').addEventListener('click', async () => {
@@ -218,6 +204,46 @@
                 document.getElementById('password').value = localStorage.getItem('password');
             }
         };
-    </script>
+
+    // Manejo de inicio de sesión con Google (redirección para WebViews o navegadores externos)
+    const googleProvider = new GoogleAuthProvider();
+
+    // Detectar si es una WebView
+    const isWebView = () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /FBAN|FBAV|Instagram|Line|WebView/.test(userAgent);
+    };
+
+    // Iniciar sesión con Google (redirigir o usar ventana emergente)
+    document.getElementById('login-google').addEventListener('click', async () => {
+        if (isWebView()) {
+            // Usar redirección para WebViews
+            signInWithRedirect(auth, googleProvider);
+        } else {
+            // Usar ventana emergente en navegadores compatibles
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                alert(`Inicio de sesión exitoso: ${user.email}`);
+            } catch (error) {
+                console.error('Error en el inicio de sesión con Google:', error);
+                alert('Error al iniciar sesión: ' + error.message);
+            }
+        }
+    });
+
+    // Obtener el resultado después de la redirección
+    getRedirectResult(auth)
+        .then((result) => {
+            if (result) {
+                const user = result.user;
+                alert(`Bienvenido de nuevo, ${user.email}`);
+            }
+        })
+        .catch((error) => {
+            console.error('Error al procesar la redirección:', error);
+        });
+</script>
+
 </body>
 </html>
