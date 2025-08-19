@@ -6,33 +6,39 @@
   box-sizing: border-box;
 }
 
-/* Estilo global */
-html, body {
+/* Estilo global - CRÍTICO para eliminar scrolls problemáticos */
+html {
   width: 100%;
   height: 100%;
-  overflow-x: hidden; /* Solo evita scroll horizontal */
-  overflow-y: auto; /* Permite scroll vertical cuando sea necesario */
+  overflow-x: hidden; /* Elimina scroll horizontal completamente */
+  scroll-behavior: smooth;
 }
 
 body {
+  width: 100%;
   min-height: 100vh;
   padding-top: 70px;
   background-color: #0c0c1f;
+  overflow-x: hidden; /* Elimina scroll horizontal del body */
+  position: relative;
 }
 
-/* Header styles */
+/* Header styles - Asegurar que no cause overflow */
 .mainPageHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  max-width: 100vw; /* Nunca exceder el viewport */
   padding: 10px 20px;
   background-color: #0c0c1f;
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 .header-title {
@@ -48,52 +54,75 @@ body {
 .logo-img-size-index {
   width: 50px;
   height: auto;
+  flex-shrink: 0;
 }
 
 .header-icons {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-shrink: 0;
 }
 
 .icon-button {
   text-decoration: none;
   font-size: 20px;
   color: #68cc8f;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .icon-button:hover {
-  color: #68cc8f;
+  color: #4a9d6b;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
 }
 
 .switchButton {
   cursor: pointer;
   font-size: 16px;
-  color: #f116cc00;
+  color: transparent;
   padding: 5px;
   transition: color 0.3s;
 }
 
-.switchButton:hover {
-  color: #000000;
-}
-
-/* Contenedor principal para el contenido */
+/* Contenedor principal - OPTIMIZADO para el widget */
 .main-content {
   width: 100%;
   max-width: 100vw;
-  padding: 20px;
+  padding: 15px;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: visible; /* Permitir que el widget se muestre correctamente */
+  position: relative;
 }
 
-/* Widget de livescore responsivo */
+/* Widget de livescore - CONFIGURACIÓN CRÍTICA */
 #ls-widget {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: calc(100vh - 100px) !important;
+  overflow: visible !important;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(104, 204, 143, 0.2);
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Asegurar que el contenido del widget sea interactivo */
+#ls-widget * {
+  pointer-events: auto !important;
+  touch-action: auto !important;
+}
+
+/* Eliminar cualquier overlay que pueda interferir */
+#ls-widget::before,
+#ls-widget::after {
+  display: none !important;
 }
 
 /* Media queries para responsividad */
@@ -112,6 +141,8 @@ body {
   
   .icon-button {
     font-size: 18px;
+    min-width: 25px;
+    min-height: 25px;
   }
   
   body {
@@ -119,7 +150,11 @@ body {
   }
   
   .main-content {
-    padding: 15px;
+    padding: 10px;
+  }
+  
+  #ls-widget {
+    min-height: calc(100vh - 80px) !important;
   }
 }
 
@@ -142,6 +177,8 @@ body {
   
   .icon-button {
     font-size: 16px;
+    min-width: 20px;
+    min-height: 20px;
   }
   
   body {
@@ -149,11 +186,15 @@ body {
   }
   
   .main-content {
-    padding: 10px;
+    padding: 8px;
+  }
+  
+  #ls-widget {
+    min-height: calc(100vh - 70px) !important;
   }
 }
 
-/* Ocultar elementos que puedan causar scroll horizontal */
+/* REGLAS CRÍTICAS para prevenir overflow */
 * {
   max-width: 100%;
   box-sizing: border-box;
@@ -170,26 +211,54 @@ img {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
+  max-width: 100%;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 25%;
+/* Eliminar cualquier scroll horizontal forzado */
+body, html, .main-content, #ls-widget {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Asegurar que no haya elementos que se salgan del viewport */
+.mainPageHeader > * {
+  flex-shrink: 0;
+}
+
+/* Prevenir que el widget cause problemas de layout */
+.livescore-widget {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+/* Orientación landscape en móviles */
+@media (orientation: landscape) and (max-height: 500px) {
+  body {
+    padding-top: 50px;
   }
   
-  .content {
-    width: 75%;
+  .mainPageHeader {
+    padding: 5px 15px;
   }
   
-  .match h2 {
-    font-size: 1.5rem;
+  .header-title {
+    font-size: 16px;
   }
   
-  .match p {
-    font-size: 0.9rem;
+  #ls-widget {
+    min-height: calc(100vh - 60px) !important;
+  }
+}
+
+/* Asegurar interactividad en dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .icon-button:hover {
+    transform: none;
   }
   
-  .flex-container {
-    flex-direction: column;
+  .icon-button:active {
+    transform: scale(0.95);
+    color: #4a9d6b;
   }
 }
