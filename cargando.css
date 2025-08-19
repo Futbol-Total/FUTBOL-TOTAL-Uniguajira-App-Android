@@ -64,6 +64,32 @@ circle {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
+.loading-message {
+    margin-top: 0.5em;
+    font-size: 1em;
+    color: #ccc;
+    text-align: center;
+}
+
+.skip-button {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.skip-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
 .pulse-text {
     animation: pulse 1s infinite;
 }

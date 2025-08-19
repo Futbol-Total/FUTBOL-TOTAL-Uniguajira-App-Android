@@ -198,6 +198,10 @@
                     console.log("Usuario autenticado en Firebase:", userCredential.user);
 
                     // Redirigir a la página de carga
+                    // Opción 1: Ir directo sin pantalla de carga
+                    // window.location.href = 'loguin.html';
+                    
+                    // Opción 2: Pantalla de carga rápida
                     window.location.href = 'pantalla de carga.html';
                 } catch (error) {
                     console.error("Error al iniciar sesión en Firebase:", error);
