@@ -1,34 +1,51 @@
+/* Estilos responsivos para pantalla de carga */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body, html {
     height: 100%;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #1e1e1e;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0c0c1f 0%, #1a1a2e 100%);
+    font-family: 'Roboto', Arial, sans-serif;
+    overflow: hidden;
 }
 
 .container {
     text-align: center;
     position: relative;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .progress-circle {
     position: relative;
     width: 100%;
-    max-width: 400px;
+    max-width: 300px;
     aspect-ratio: 1;
+    margin-bottom: 30px;
 }
 
 .logo {
-    width: 80%;
-    max-width: 300px;
+    width: 70%;
+    max-width: 200px;
     border-radius: 50%;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(104, 204, 143, 0.4);
     position: absolute;
-    top: 10%;
-    left: 10%;
+    top: 15%;
+    left: 15%;
     z-index: 2;
+    animation: logoFloat 3s ease-in-out infinite;
 }
 
 .circle {
@@ -41,67 +58,179 @@ body, html {
 
 circle {
     fill: none;
-    stroke-width: 5;
+    stroke-width: 4;
 }
 
 .background {
-    stroke: #333;
+    stroke: rgba(255, 255, 255, 0.1);
 }
 
 .progress {
-    stroke: #4CAF50; /* Verde */
-    stroke-dasharray: 282.6; /* Circunferencia del círculo */
-    stroke-dashoffset: 282.6; /* Ocultar al inicio */
+    stroke: #68cc8f;
+    stroke-dasharray: 282.6;
+    stroke-dashoffset: 282.6;
     stroke-linecap: round;
-    transition: stroke-dashoffset 0.1s;
+    transition: stroke-dashoffset 0.1s ease;
+    filter: drop-shadow(0 0 8px rgba(104, 204, 143, 0.6));
 }
 
 #progress-text {
-    margin-top: 1em;
-    font-size: 1.5em;
+    font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    color: #68cc8f;
+    text-shadow: 0 0 15px rgba(104, 204, 143, 0.8);
+    margin-bottom: 15px;
 }
 
 .loading-message {
-    margin-top: 0.5em;
-    font-size: 1em;
-    color: #ccc;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.8);
     text-align: center;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
 }
 
 .skip-button {
-    position: absolute;
+    position: fixed;
     bottom: 30px;
     right: 30px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(104, 204, 143, 0.2), rgba(104, 204, 143, 0.4));
+    border: 1px solid rgba(104, 204, 143, 0.5);
     color: white;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border-radius: 25px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.9rem;
+    font-weight: 500;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .skip-button:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(104, 204, 143, 0.4), rgba(104, 204, 143, 0.6));
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(104, 204, 143, 0.3);
 }
 
-.pulse-text {
-    animation: pulse 1s infinite;
+.skip-button:active {
+    transform: translateY(0);
 }
 
 /* Animaciones */
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.02);
+    }
+}
+
 @keyframes pulse {
     0%, 100% {
-        transform: scale(1);
         opacity: 1;
     }
     50% {
-        transform: scale(1.1);
         opacity: 0.7;
+    }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .progress-circle {
+        max-width: 250px;
+        margin-bottom: 20px;
+    }
+    
+    .logo {
+        width: 65%;
+        max-width: 150px;
+    }
+    
+    .skip-button {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 16px;
+        font-size: 0.8rem;
+    }
+    
+    circle {
+        stroke-width: 3;
+    }
+}
+
+@media (max-width: 320px) {
+    .progress-circle {
+        max-width: 200px;
+    }
+    
+    .logo {
+        width: 60%;
+        max-width: 120px;
+    }
+    
+    #progress-text {
+        font-size: 1.3rem;
+    }
+    
+    .loading-message {
+        font-size: 0.9rem;
+    }
+}
+
+/* Orientación horizontal en móviles */
+@media (orientation: landscape) and (max-height: 500px) {
+    .container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+    }
+    
+    .progress-circle {
+        max-width: 200px;
+        margin-bottom: 0;
+    }
+    
+    .text-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .skip-button {
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .progress-circle {
+        max-width: 350px;
+    }
+    
+    .logo {
+        max-width: 250px;
+    }
+}
+
+/* Pantallas grandes */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 500px;
+    }
+    
+    .progress-circle {
+        max-width: 400px;
+    }
+    
+    .logo {
+        max-width: 280px;
     }
 }

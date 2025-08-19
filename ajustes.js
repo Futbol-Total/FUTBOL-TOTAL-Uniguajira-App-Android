@@ -64,6 +64,38 @@ onAuthStateChanged(auth, (user) => {
         const userName = getUserNameFromEmail(user.email);
         document.getElementById('user-name').textContent = userName;
         document.getElementById('email').value = user.email;
+        
+        // Actualizar información adicional
+        const creationTime = user.metadata.creationTime;
+        const lastSignInTime = user.metadata.lastSignInTime;
+        
+        if (creationTime) {
+            const memberSince = new Date(creationTime).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long'
+            });
+            document.getElementById('member-since').value = memberSince;
+        }
+        
+        if (lastSignInTime) {
+            const lastLogin = new Date(lastSignInTime);
+            const now = new Date();
+            const diffTime = Math.abs(now - lastLogin);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let lastLoginText;
+            if (diffDays === 1) {
+                lastLoginText = 'Hoy';
+            } else if (diffDays === 2) {
+                lastLoginText = 'Ayer';
+            } else if (diffDays <= 7) {
+                lastLoginText = `Hace ${diffDays - 1} días`;
+            } else {
+                lastLoginText = lastLogin.toLocaleDateString('es-ES');
+            }
+            
+            document.getElementById('last-login').value = lastLoginText;
+        }
     } else {
         window.location.href = 'index.html';
     }

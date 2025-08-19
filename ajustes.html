@@ -26,12 +26,40 @@
             <div class="profile-info">
                 <img id="profile-img" src="img/logo_3-removebg-preview.png" alt="Avatar" class="avatar">
                 <h2 id="user-name">Nombre de Usuario</h2>
+                
+                <!-- Estadísticas del usuario -->
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">127</span>
+                        <span class="stat-label">Partidos Vistos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">Equipos Favoritos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">45</span>
+                        <span class="stat-label">Días Activo</span>
+                    </div>
+                </div>
             </div>
 
             <div class="form-container">
                 <form class="settings-form" id="settings-form">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" disabled>
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="member-since">Miembro Desde</label>
+                        <input type="text" id="member-since" value="Enero 2024" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="last-login">Último Acceso</label>
+                        <input type="text" id="last-login" value="Hoy" disabled>
+                    </div>
 
                     <button type="button" id="logout-btn" class="btn-logout">Cerrar Sesión</button>
                 </form>

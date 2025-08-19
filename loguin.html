@@ -21,7 +21,7 @@
 <header>
 	<div class="container">
 		<div class="mainPageHeader">
-			<a href="index.html">
+			<a href="#" onclick="location.reload()">
 				<img class="logo-img-size-index" src="img/logo_3-removebg-preview.ico" alt="Website Logo">
 				<!-- Added text next to the logo -->
 				<span class="header-title">Futbol Total</span>
@@ -30,7 +30,7 @@
 			<p class="switchButton"><span></span></p>
 			<!-- New buttons for Home and Users -->
 			<div class="header-icons">
-				<a href="index.html" class="icon-button home-button">
+				<a href="#" onclick="location.reload()" class="icon-button home-button">
 					<i class="fas fa-home"></i> <!-- Home icon -->
 				</a>
 				<a href="ajustes.html" class="icon-button user-button">
@@ -40,5 +40,14 @@
 		</div>
 	</div>
 </header>
+
+<!-- Contenedor principal para el widget -->
+<div class="main-content">
+	<!-- LIVESCORE WIDGET SOCCERSAPI.COM -->
+	<div id="ls-widget" data-w="awo_w6987_672fefc15b4d4" class="livescore-widget"></div>
+	<script type="text/javascript" src="https://ls.soccersapi.com/widget/res/awo_w6987_672fefc15b4d4/widget.js"></script>
+	<!-- LIVESCORE WIDGET SOCCERSAPI.COM -->
+</div>
+
 </body>
 </html>
