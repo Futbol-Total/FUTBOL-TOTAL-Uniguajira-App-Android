@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#68cc8f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Futbol Total">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/img/logo_3-removebg-preview.png">
+    <link rel="icon" href="/img/logo_3-removebg-preview.png" type="image/png">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/mobile-styles.css" as="style">
+    <link rel="preload" href="/mobile-components.js" as="script">
+    
+    <title>Futbol Total - App Móvil</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/mobile-styles.css">
+    
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMFTlJxZdDGQ0IV0skUI6ozgPGxLYhsDg",
+            authDomain: "futbol-total-b4166.firebaseapp.com",
+            projectId: "futbol-total-b4166",
+            storageBucket: "futbol-total-b4166.appspot.com",
+            messagingSenderId: "510814548258",
+            appId: "1:510814548258:web:a3c8599e36c621bdfd757b",
+            measurementId: "G-T0J7Q4S9YP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Verificar autenticación
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = '/index.html';
+            } else {
+                document.body.classList.add('authenticated');
+                document.getElementById('user-name').textContent = user.email.split('@')[0];
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="/img/logo_3-removebg-preview.png" alt="Futbol Total" class="splash-logo">
+            <h1>Futbol Total</h1>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="mobile-header">
+        <img src="/img/logo_3-removebg-preview.png" alt="Logo" class="logo">
+        <h1 class="title">Futbol Total</h1>
+        <div class="header-actions">
+            <button id="install-button" class="touch-button" style="display: none;">
+                <i class="fas fa-download"></i>
+            </button>
+            <button id="notifications-button" class="touch-button">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-container">
+        <!-- Home Page Content -->
+        <div class="mobile-card">
+            <div class="card-header">
+                <h2><i class="fas fa-futbol"></i> Partidos de Hoy</h2>
+                <button class="touch-button" onclick="window.mobileApp.triggerRefresh()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            
+            <!-- Live Score Widget -->
+            <div class="widget-container">
+                <div id="ls-widget" data-w="awo_w6987_672fefc15b4d4" class="livescore-widget"></div>
+            </div>
+        </div>
+
+        <div class="mobile-card">
+            <h3><i class="fas fa-trophy"></i> Ligas Principales</h3>
+            <div class="leagues-grid">
+                <div class="league-item">
+                    <img src="https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="Liga">
+                    <span>La Liga</span>
+                </div>
+                <div class="league-item">
+                    <img src="https://images.pexels.com/photos/1884574/pexels-photo-1884574.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="Liga">
+                    <span>Premier League</span>
+                </div>
+                <div class="league-item">
+                    <img src="https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="Liga">
+                    <span>Serie A</span>
+                </div>
+                <div class="league-item">
+                    <img src="https://images.pexels.com/photos/1171084/pexels-photo-1171084.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="Liga">
+                    <span>Bundesliga</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-card">
+            <h3><i class="fas fa-newspaper"></i> Noticias Destacadas</h3>
+            <div class="news-list">
+                <article class="news-item">
+                    <img src="https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" alt="Noticia">
+                    <div class="news-content">
+                        <h4>Título de la noticia</h4>
+                        <p>Resumen de la noticia deportiva...</p>
+                        <span class="news-time">Hace 2 horas</span>
+                    </div>
+                </article>
+                <article class="news-item">
+                    <img src="https://images.pexels.com/photos/1884574/pexels-photo-1884574.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" alt="Noticia">
+                    <div class="news-content">
+                        <h4>Otra noticia importante</h4>
+                        <p>Más información deportiva relevante...</p>
+                        <span class="news-time">Hace 4 horas</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-navigation">
+        <a href="#home" class="nav-item active" data-page="home">
+            <i class="fas fa-home"></i>
+            <span>Inicio</span>
+        </a>
+        <a href="#matches" class="nav-item" data-page="matches">
+            <i class="fas fa-futbol"></i>
+            <span>Partidos</span>
+        </a>
+        <a href="#leagues" class="nav-item" data-page="leagues">
+            <i class="fas fa-trophy"></i>
+            <span>Ligas</span>
+        </a>
+        <a href="#news" class="nav-item" data-page="news">
+            <i class="fas fa-newspaper"></i>
+            <span>Noticias</span>
+        </a>
+        <a href="#profile" class="nav-item" data-page="profile">
+            <i class="fas fa-user"></i>
+            <span id="user-name">Perfil</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://ls.soccersapi.com/widget/res/awo_w6987_672fefc15b4d4/widget.js"></script>
+    <script src="/mobile-components.js"></script>
+    
+    <script>
+        // Ocultar splash screen después de cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+            }, 2000);
+        });
+
+        // Manejar instalación de PWA
+        document.getElementById('install-button').addEventListener('click', () => {
+            window.mobileUtils.addToHomeScreen();
+        });
+
+        // Manejar notificaciones
+        document.getElementById('notifications-button').addEventListener('click', () => {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        window.mobileApp.showNotification('¡Notificaciones activadas!', {
+                            body: 'Ahora recibirás actualizaciones de partidos'
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        /* Estilos adicionales específicos para esta página */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0c0c1f 0%, #1a1a2e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .splash-content {
+            text-align: center;
+            color: white;
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .splash-content h1 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #68cc8f;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .widget-container {
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .leagues-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .league-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .league-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .league-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .news-list {
+            margin-top: 15px;
+        }
+
+        .news-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-content h4 {
+            margin-bottom: 5px;
+            font-size: 1rem;
+            color: #68cc8f;
+        }
+
+        .news-content p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+        }
+
+        .news-time {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Ajustes para el widget de livescore */
+        #ls-widget {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Animaciones */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Navegación activa */
+        .nav-item.active {
+            color: #68cc8f;
+        }
+
+        /* Espaciado para navegación inferior */
+        .main-container {
+            padding-bottom: 80px;
+        }
+    </style>
+</body>
+</html>
