@@ -1,17 +1,10 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
-
-const { width, height } = Dimensions.get('window');
 
 export default function WebViewWidget() {
   const webViewRef = useRef<WebView>(null);
   
-  // Hacer la referencia global para poder recargar desde otros componentes
-  React.useEffect(() => {
-    global.webViewRef = webViewRef.current;
-  }, []);
-
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -27,44 +20,16 @@ export default function WebViewWidget() {
             html, body {
                 width: 100%;
                 height: 100vh;
-                overflow-x: hidden;
                 background-color: #0c0c1f;
                 font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
             }
             #ls-widget {
                 width: 100% !important;
                 height: 100vh !important;
-                min-height: 100vh !important;
-                max-width: 100% !important;
                 border: none !important;
-                overflow: visible !important;
                 background: transparent !important;
-                position: relative;
-                z-index: 1;
-            }
-            #ls-widget * {
-                pointer-events: auto !important;
-                touch-action: auto !important;
-            }
-            /* Eliminar cualquier overlay que pueda interferir */
-            #ls-widget::before,
-            #ls-widget::after {
-                display: none !important;
-            }
-            /* Asegurar que el contenido del widget sea completamente interactivo */
-            .livescore-widget {
-                width: 100% !important;
-                max-width: 100% !important;
-                overflow: visible !important;
-            }
-            /* Eliminar cualquier scroll horizontal problemático */
-            body, html {
-                -webkit-overflow-scrolling: touch;
-            }
-            /* Asegurar que no haya elementos que se salgan del viewport */
-            * {
-                max-width: 100%;
-                box-sizing: border-box;
             }
         </style>
     </head>
@@ -76,8 +41,7 @@ export default function WebViewWidget() {
   `;
 
   return (
-    <View style={styles.container}>
-      <WebView
+    <WebView
         ref={webViewRef}
         source={{ html: htmlContent }}
         style={styles.webview}
@@ -85,8 +49,6 @@ export default function WebViewWidget() {
         domStorageEnabled={true}
         startInLoadingState={false}
         scalesPageToFit={false}
-        scrollEnabled={true}
-        nestedScrollEnabled={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={true}
         allowsInlineMediaPlayback={true}
@@ -95,8 +57,6 @@ export default function WebViewWidget() {
         thirdPartyCookiesEnabled={true}
         sharedCookiesEnabled={true}
         originWhitelist={['*']}
-        allowsFullscreenVideo={true}
-        allowsProtectedMedia={true}
         bounces={false}
         overScrollMode="never"
         contentInsetAdjustmentBehavior="automatic"
@@ -108,21 +68,12 @@ export default function WebViewWidget() {
         onLoadEnd={() => console.log('Widget cargado')}
         onError={(error) => console.log('Error en widget:', error)}
       />
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0c0c1f',
-    width: '100%',
-    height: '100%',
-  },
   webview: {
     flex: 1,
     backgroundColor: '#0c0c1f',
-    width: '100%',
-    height: '100%',
   },
 });
