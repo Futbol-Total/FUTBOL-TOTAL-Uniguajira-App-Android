@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const { width, height } = Dimensions.get('window');
 
 export default function WebViewWidget() {
+  const webViewRef = useRef<WebView>(null);
+  
+  // Hacer la referencia global para poder recargar desde otros componentes
+  React.useEffect(() => {
+    global.webViewRef = webViewRef.current;
+  }, []);
+
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -19,9 +26,9 @@ export default function WebViewWidget() {
             }
             html, body {
                 width: 100%;
-                height: 100%;
-                overflow: hidden;
-                background-color: transparent;
+                height: 100vh;
+                overflow-x: hidden;
+                background-color: #0c0c1f;
                 font-family: Arial, sans-serif;
             }
             #ls-widget {
@@ -50,6 +57,15 @@ export default function WebViewWidget() {
                 max-width: 100% !important;
                 overflow: visible !important;
             }
+            /* Eliminar cualquier scroll horizontal problemático */
+            body, html {
+                -webkit-overflow-scrolling: touch;
+            }
+            /* Asegurar que no haya elementos que se salgan del viewport */
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
         </style>
     </head>
     <body>
@@ -62,6 +78,7 @@ export default function WebViewWidget() {
   return (
     <View style={styles.container}>
       <WebView
+        ref={webViewRef}
         source={{ html: htmlContent }}
         style={styles.webview}
         javaScriptEnabled={true}
@@ -71,7 +88,7 @@ export default function WebViewWidget() {
         scrollEnabled={true}
         nestedScrollEnabled={true}
         showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         allowsInlineMediaPlayback={true}
         mediaPlaybackRequiresUserAction={false}
         mixedContentMode="compatibility"
@@ -82,11 +99,14 @@ export default function WebViewWidget() {
         allowsProtectedMedia={true}
         bounces={false}
         overScrollMode="never"
-        contentInsetAdjustmentBehavior="never"
+        contentInsetAdjustmentBehavior="automatic"
         setSupportMultipleWindows={false}
         allowFileAccess={true}
         allowUniversalAccessFromFileURLs={true}
         allowFileAccessFromFileURLs={true}
+        onLoadStart={() => console.log('Widget cargando...')}
+        onLoadEnd={() => console.log('Widget cargado')}
+        onError={(error) => console.log('Error en widget:', error)}
       />
     </View>
   );
@@ -95,13 +115,13 @@ export default function WebViewWidget() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: '#0c0c1f',
     width: '100%',
     height: '100%',
   },
   webview: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: '#0c0c1f',
     width: '100%',
     height: '100%',
   },

@@ -20,11 +20,11 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     if (user) {
-      // Calcular datos reales del usuario
+      // Calcular datos reales del usuario desde Firebase
       const creationTime = user.metadata?.creationTime;
       const lastSignInTime = user.metadata?.lastSignInTime;
       
-      let memberSince = 'Enero 2024';
+      let memberSince = 'Información no disponible';
       if (creationTime) {
         memberSince = new Date(creationTime).toLocaleDateString('es-ES', {
           year: 'numeric',
@@ -32,7 +32,7 @@ export default function ProfileScreen() {
         });
       }
       
-      let lastLogin = 'Hoy';
+      let lastLogin = 'Información no disponible';
       if (lastSignInTime) {
         const lastLoginDate = new Date(lastSignInTime);
         const now = new Date();
