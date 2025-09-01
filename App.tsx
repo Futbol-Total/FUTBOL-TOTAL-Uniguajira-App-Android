@@ -48,19 +48,17 @@ function AppNavigator() {
           tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
           tabBarStyle: {
             backgroundColor: '#0c0c1f',
-            borderTopColor: 'rgba(255, 255, 255, 0.1)',
+            borderTopColor: 'rgba(104, 204, 143, 0.2)',
             borderTopWidth: 1,
             paddingBottom: 5,
             paddingTop: 5,
             height: 60,
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
           },
-          headerStyle: {
-            backgroundColor: '#0c0c1f',
-          },
-          headerTintColor: '#68cc8f',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+          headerShown: false,
         })}
       >
         <Tab.Screen name="Inicio" component={HomeScreen} />

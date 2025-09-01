@@ -3,23 +3,26 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import WebViewWidget from '../components/WebViewWidget';
 
 export default function MatchesScreen() {
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Todos los Partidos</Text>
-          <Text style={styles.subtitle}>Resultados en tiempo real</Text>
-        </View>
-        
-        <View style={styles.widgetContainer}>
-          <WebViewWidget />
-        </View>
-      </ScrollView>
+      {/* Header simple */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Todos los Partidos</Text>
+        <TouchableOpacity style={styles.refreshButton}>
+          <Ionicons name="refresh" size={24} color="#68cc8f" />
+        </TouchableOpacity>
+      </View>
+      
+      {/* Widget que ocupa toda la pantalla disponible */}
+      <View style={styles.widgetContainer}>
+        <WebViewWidget />
+      </View>
     </View>
   );
 }
@@ -29,28 +32,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0c0c1f',
   },
-  content: {
-    flex: 1,
-  },
   header: {
-    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#0c0c1f',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(104, 204, 143, 0.2)',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#68cc8f',
-    marginBottom: 5,
   },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+  refreshButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(104, 204, 143, 0.1)',
   },
   widgetContainer: {
     flex: 1,
-    margin: 15,
-    borderRadius: 15,
+    margin: 10,
+    borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: 'rgba(26, 26, 46, 0.8)',
+    backgroundColor: 'transparent',
   },
 });

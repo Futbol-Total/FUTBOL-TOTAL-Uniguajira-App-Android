@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,49 @@ import { useAuth } from '../context/AuthContext';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const [userStats, setUserStats] = useState({
+    memberSince: 'Cargando...',
+    lastLogin: 'Cargando...',
+  });
+
+  useEffect(() => {
+    if (user) {
+      // Calcular datos reales del usuario
+      const creationTime = user.metadata?.creationTime;
+      const lastSignInTime = user.metadata?.lastSignInTime;
+      
+      let memberSince = 'Enero 2024';
+      if (creationTime) {
+        memberSince = new Date(creationTime).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long'
+        });
+      }
+      
+      let lastLogin = 'Hoy';
+      if (lastSignInTime) {
+        const lastLoginDate = new Date(lastSignInTime);
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - lastLoginDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          lastLogin = 'Hoy';
+        } else if (diffDays === 2) {
+          lastLogin = 'Ayer';
+        } else if (diffDays <= 7) {
+          lastLogin = `Hace ${diffDays - 1} días`;
+        } else {
+          lastLogin = lastLoginDate.toLocaleDateString('es-ES');
+        }
+      }
+      
+      setUserStats({
+        memberSince,
+        lastLogin,
+      });
+    }
+  }, [user]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -39,12 +82,6 @@ export default function ProfileScreen() {
     return email.split('@')[0];
   };
 
-  const stats = [
-    { label: 'Partidos Vistos', value: '127' },
-    { label: 'Equipos Favoritos', value: '8' },
-    { label: 'Días Activo', value: '45' },
-  ];
-
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
@@ -56,15 +93,6 @@ export default function ProfileScreen() {
           {user?.email ? getUserName(user.email) : 'Usuario'}
         </Text>
         <Text style={styles.userEmail}>{user?.email}</Text>
-      </View>
-
-      <View style={styles.statsContainer}>
-        {stats.map((stat, index) => (
-          <View key={index} style={styles.statItem}>
-            <Text style={styles.statValue}>{stat.value}</Text>
-            <Text style={styles.statLabel}>{stat.label}</Text>
-          </View>
-        ))}
       </View>
 
       <View style={styles.infoContainer}>
@@ -80,15 +108,7 @@ export default function ProfileScreen() {
           <Ionicons name="calendar" size={20} color="#68cc8f" />
           <View style={styles.infoContent}>
             <Text style={styles.infoLabel}>Miembro Desde</Text>
-            <Text style={styles.infoValue}>
-              {user?.metadata?.creationTime 
-                ? new Date(user.metadata.creationTime).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'long'
-                  })
-                : 'Enero 2024'
-              }
-            </Text>
+            <Text style={styles.infoValue}>{userStats.memberSince}</Text>
           </View>
         </View>
 
@@ -96,7 +116,7 @@ export default function ProfileScreen() {
           <Ionicons name="time" size={20} color="#68cc8f" />
           <View style={styles.infoContent}>
             <Text style={styles.infoLabel}>Último Acceso</Text>
-            <Text style={styles.infoValue}>Hoy</Text>
+            <Text style={styles.infoValue}>{userStats.lastLogin}</Text>
           </View>
         </View>
       </View>
@@ -138,28 +158,6 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.8)',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: 'rgba(26, 26, 46, 0.8)',
-    margin: 15,
-    padding: 20,
-    borderRadius: 15,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#68cc8f',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginTop: 5,
-    textAlign: 'center',
   },
   infoContainer: {
     backgroundColor: 'rgba(26, 26, 46, 0.8)',
