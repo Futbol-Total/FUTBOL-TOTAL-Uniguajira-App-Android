@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
+
+const { width, height } = Dimensions.get('window');
 
 export default function WebViewWidget() {
   const webViewRef = useRef<WebView>(null);
@@ -19,17 +21,26 @@ export default function WebViewWidget() {
             }
             html, body {
                 width: 100%;
-                height: 100vh;
+                height: 100%;
                 background-color: #0c0c1f;
                 font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
+                overflow-x: hidden;
             }
             #ls-widget {
                 width: 100% !important;
-                height: 100vh !important;
+                height: 100% !important;
                 border: none !important;
                 background: transparent !important;
+                overflow-x: hidden !important;
+            }
+            /* Ajustes específicos para móvil */
+            @media screen and (max-width: 768px) {
+                #ls-widget {
+                    transform: scale(1);
+                    transform-origin: top left;
+                }
             }
         </style>
     </head>
@@ -47,10 +58,10 @@ export default function WebViewWidget() {
         style={styles.webview}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        startInLoadingState={false}
+        startInLoadingState={true}
         scalesPageToFit={false}
         showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={true}
+        showsVerticalScrollIndicator={false}
         allowsInlineMediaPlayback={true}
         mediaPlaybackRequiresUserAction={false}
         mixedContentMode="compatibility"
@@ -58,7 +69,7 @@ export default function WebViewWidget() {
         sharedCookiesEnabled={true}
         originWhitelist={['*']}
         bounces={false}
-        overScrollMode="never"
+        overScrollMode="always"
         contentInsetAdjustmentBehavior="automatic"
         setSupportMultipleWindows={false}
         allowFileAccess={true}
@@ -67,6 +78,20 @@ export default function WebViewWidget() {
         onLoadStart={() => console.log('Widget cargando...')}
         onLoadEnd={() => console.log('Widget cargado')}
         onError={(error) => console.log('Error en widget:', error)}
+        injectedJavaScript={`
+          // Ajustar el viewport para móvil
+          const meta = document.createElement('meta');
+          meta.name = 'viewport';
+          meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+          document.getElementsByTagName('head')[0].appendChild(meta);
+          
+          // Prevenir zoom accidental
+          document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+          });
+          
+          true; // Requerido para que funcione el injectedJavaScript
+        `}
       />
   );
 }
@@ -75,5 +100,6 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
     backgroundColor: '#0c0c1f',
+    width: width,
   },
 });
