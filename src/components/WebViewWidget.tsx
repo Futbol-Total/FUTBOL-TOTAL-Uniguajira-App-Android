@@ -1,54 +1,67 @@
 import React, { useRef } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, View, Image } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const { width, height } = Dimensions.get('window');
 
-export default function WebViewWidget() {
+interface WebViewWidgetProps {
+  url?: string;
+}
+
+export default function WebViewWidget({ url = 'https://futbol-total.uniguajira.com' }: WebViewWidgetProps) {
   const webViewRef = useRef<WebView>(null);
   
   const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            html, body {
-                width: 100%;
-                height: 100%;
-                background-color: #0c0c1f;
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                overflow-x: hidden;
-            }
-            #ls-widget {
-                width: 100% !important;
-                height: 100% !important;
-                border: none !important;
-                background: transparent !important;
-                overflow-x: hidden !important;
-            }
-            /* Ajustes específicos para móvil */
-            @media screen and (max-width: 768px) {
-                #ls-widget {
-                    transform: scale(1);
-                    transform-origin: top left;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div id="ls-widget" data-w="awo_w6987_672fefc15b4d4" class="livescore-widget"></div>
-        <script type="text/javascript" src="https://ls.soccersapi.com/widget/res/awo_w6987_672fefc15b4d4/widget.js"></script>
-    </body>
-    </html>
+    <View style={styles.container}>
+      <View style={styles.bannerContainer}>
+        <Image
+          source={require('../../img/logo_3-removebg-preview.png')}
+          style={styles.bannerLogo}
+          resizeMode="contain"
+        />
+      </View>
+      <WebView
+        ref={webViewRef}
+        source={{ uri: url }}
+        style={styles.webview}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
+        scalesPageToFit={true}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
+        allowsInlineMediaPlayback={true}
+        mediaPlaybackRequiresUserAction={false}
+        mixedContentMode="compatibility"
+        thirdPartyCookiesEnabled={true}
+        sharedCookiesEnabled={true}
+        originWhitelist={['*']}
+        bounces={false}
+        overScrollMode="always"
+        contentInsetAdjustmentBehavior="automatic"
+        setSupportMultipleWindows={false}
+        allowFileAccess={true}
+        allowUniversalAccessFromFileURLs={true}
+        allowFileAccessFromFileURLs={true}
+        onLoadStart={() => console.log('Widget cargando...')}
+        onLoadEnd={() => console.log('Widget cargado')}
+        onError={(error) => console.log('Error en widget:', error)}
+        injectedJavaScript={`
+          // Ajustar el viewport para móvil
+          const meta = document.createElement('meta');
+          meta.name = 'viewport';
+          meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+          document.getElementsByTagName('head')[0].appendChild(meta);
+          
+          // Prevenir zoom accidental
+          document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+          });
+          
+          true; // Requerido para que funcione el injectedJavaScript
+        `}
+      />
+    </View>
   `;
 
   return (
@@ -97,9 +110,24 @@ export default function WebViewWidget() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0c0c1f',
+  },
+  bannerContainer: {
+    backgroundColor: '#0c0c1f',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(104, 204, 143, 0.2)',
+  },
+  bannerLogo: {
+    width: 120,
+    height: 40,
+  },
   webview: {
     flex: 1,
     backgroundColor: '#0c0c1f',
-    width: width,
   },
 });

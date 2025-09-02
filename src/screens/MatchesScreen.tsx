@@ -6,7 +6,7 @@ import WebViewWidget from '../components/WebViewWidget';
 export default function MatchesScreen() {
   return (
     </SafeAreaView>
-  );
+      <WebViewWidget url="https://futbol-total.uniguajira.com/partidos" />
 }
 
 const styles = StyleSheet.create({
