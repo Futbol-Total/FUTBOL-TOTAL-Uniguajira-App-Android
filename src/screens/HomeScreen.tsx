@@ -7,6 +7,7 @@ export default function HomeScreen() {
   return (
     </SafeAreaView>
       <WebViewWidget url="https://futbol-total.uniguajira.com" />
+  )
 }
 
 const styles = StyleSheet.create({
