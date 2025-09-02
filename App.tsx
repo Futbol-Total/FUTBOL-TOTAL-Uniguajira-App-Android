@@ -10,6 +10,7 @@ import MatchesScreen from './src/screens/MatchesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { FavoritesProvider } from './src/context/FavoritesContext';
 import LoadingScreen from './src/screens/LoadingScreen';
 
 const Tab = createBottomTabNavigator();
@@ -73,8 +74,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <AppNavigator />
-        <StatusBar style="light" backgroundColor="#0c0c1f" />
+        <FavoritesProvider>
+          <AppNavigator />
+          <StatusBar style="light" backgroundColor="#0c0c1f" />
+        </FavoritesProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );
