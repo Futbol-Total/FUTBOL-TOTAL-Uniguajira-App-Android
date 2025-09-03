@@ -19,8 +19,10 @@ export default function AuthScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -41,6 +43,28 @@ export default function AuthScreen() {
         await signUp(email, password);
         Alert.alert('Éxito', 'Cuenta creada exitosamente');
       }
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!resetEmail) {
+      Alert.alert('Error', 'Por favor ingresa tu correo electrónico');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await resetPassword(resetEmail);
+      Alert.alert(
+        'Correo enviado',
+        'Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico'
+      );
+      setShowForgotPassword(false);
+      setResetEmail('');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
@@ -119,8 +143,66 @@ export default function AuthScreen() {
               {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
             </Text>
           </TouchableOpacity>
+
+          {isLogin && (
+            <TouchableOpacity
+              style={styles.forgotButton}
+              onPress={() => setShowForgotPassword(true)}
+            >
+              <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
+
+      {/* Modal para recuperar contraseña */}
+      <Modal
+        visible={showForgotPassword}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Recuperar Contraseña</Text>
+            <Text style={styles.modalDescription}>
+              Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña
+            </Text>
+            
+            <TextInput
+              style={styles.input}
+              placeholder="Correo electrónico"
+              placeholderTextColor="rgba(255, 255, 255, 0.6)"
+              value={resetEmail}
+              onChangeText={setResetEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => {
+                  setShowForgotPassword(false);
+                  setResetEmail('');
+                }}
+              >
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton, loading && styles.buttonDisabled]}
+                onPress={handleForgotPassword}
+                disabled={loading}
+              >
+                <Text style={styles.confirmButtonText}>
+                  {loading ? 'Enviando...' : 'Enviar'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }

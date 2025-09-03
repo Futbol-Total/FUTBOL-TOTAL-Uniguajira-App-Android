@@ -35,7 +35,7 @@ interface Match {
 }
 
 class SportsNewsAPI {
-  private readonly NEWS_API_KEY = 'YOUR_NEWS_API_KEY'; // Reemplazar con API key real
+  private readonly NEWS_API_KEY = 'b37de3c9e93b4f88800d2f06cedf9669';
   private readonly FOOTBALL_API_KEY = 'YOUR_FOOTBALL_API_KEY'; // Reemplazar con API key real
 
   async getTeamNews(teamNames: string[]): Promise<NewsArticle[]> {
