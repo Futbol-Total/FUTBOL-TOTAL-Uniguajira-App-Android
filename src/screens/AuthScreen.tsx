@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Modal,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
@@ -80,7 +81,7 @@ export default function AuthScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.logoContainer}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../img/logo_3-removebg-preview.png')}
             style={styles.logo}
             resizeMode="contain"
           />

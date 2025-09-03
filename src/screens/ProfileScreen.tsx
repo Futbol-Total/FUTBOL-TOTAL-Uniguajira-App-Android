@@ -108,7 +108,7 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.banner}>
         <Image
-          source={require('../../assets/logo.png')}
+          source={require('../../img/logo_3-removebg-preview.png')}
           style={styles.bannerLogo}
           resizeMode="contain"
         />
@@ -117,7 +117,7 @@ export default function ProfileScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../img/logo_3-removebg-preview.png')}
             style={styles.avatar}
           />
           <Text style={styles.userName}>

@@ -128,7 +128,7 @@ export default function HomeScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.banner}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../img/logo_3-removebg-preview.png')}
             style={styles.bannerLogo}
             resizeMode="contain"
           />
@@ -148,7 +148,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.banner}>
         <Image
-          source={require('../../assets/logo.png')}
+          source={require('../../img/logo_3-removebg-preview.png')}
           style={styles.bannerLogo}
           resizeMode="contain"
         />

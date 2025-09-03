@@ -54,7 +54,7 @@ export default function LoadingScreen() {
       <View style={styles.content}>
         <Animated.View style={[styles.logoContainer, { transform: [{ scale: logoScale }] }]}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../img/logo_3-removebg-preview.png')}
             style={styles.logo}
             resizeMode="contain"
           />

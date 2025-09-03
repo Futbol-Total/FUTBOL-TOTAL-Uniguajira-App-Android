@@ -13,7 +13,7 @@ export default function WebViewWidget({ url = 'https://futbol-total.uniguajira.c
     <View style={styles.container}>
       <View style={styles.bannerContainer}>
         <Image
-          source={require('../../assets/logo.png')}
+          source={require('../../img/logo_3-removebg-preview.png')}
           style={styles.bannerLogo}
           resizeMode="contain"
         />
