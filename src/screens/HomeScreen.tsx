@@ -7,14 +7,12 @@ import {
   TouchableOpacity,
   Image,
   RefreshControl,
-  Dimensions,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFavorites } from '../context/FavoritesContext';
-import NewsService from '../services/NewsService';
-
-const { width } = Dimensions.get('window');
+import SportsNewsAPI from '../services/SportsNewsAPI';
 
 interface NewsArticle {
   id: string;
@@ -36,12 +34,27 @@ interface TransferNews {
   amount: string;
   date: string;
   status: 'rumor' | 'confirmed' | 'official';
+  source: string;
+}
+
+interface Match {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  date: string;
+  competition: string;
+  status: 'scheduled' | 'live' | 'finished';
+  score?: {
+    home: number;
+    away: number;
+  };
 }
 
 export default function HomeScreen() {
   const { favoriteTeams } = useFavorites();
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [transfers, setTransfers] = useState<TransferNews[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -56,13 +69,15 @@ export default function HomeScreen() {
     setLoading(true);
     try {
       const teamNames = favoriteTeams.map(team => team.name);
-      const [newsData, transfersData] = await Promise.all([
-        NewsService.getTeamNews(teamNames),
-        NewsService.getTransferNews(teamNames)
+      const [newsData, transfersData, matchesData] = await Promise.all([
+        SportsNewsAPI.getTeamNews(teamNames),
+        SportsNewsAPI.getTransferNews(teamNames),
+        SportsNewsAPI.getTeamMatches(teamNames)
       ]);
       
       setNews(newsData);
       setTransfers(transfersData);
+      setMatches(matchesData);
     } catch (error) {
       console.error('Error loading team data:', error);
     } finally {
@@ -97,6 +112,14 @@ export default function HomeScreen() {
       case 'confirmed': return 'CONFIRMADO';
       case 'rumor': return 'RUMOR';
       default: return 'RUMOR';
+    }
+  };
+
+  const openArticle = async (url: string) => {
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      console.error('Error opening article:', error);
     }
   };
 
@@ -152,6 +175,31 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
+        {/* Próximos Partidos */}
+        {matches.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Próximos Partidos</Text>
+            {matches.map((match) => (
+              <View key={match.id} style={styles.matchCard}>
+                <View style={styles.matchHeader}>
+                  <Text style={styles.competition}>{match.competition}</Text>
+                  <Text style={styles.matchDate}>{formatDate(match.date)}</Text>
+                </View>
+                <View style={styles.matchTeams}>
+                  <Text style={styles.teamName}>{match.homeTeam}</Text>
+                  <Text style={styles.vs}>VS</Text>
+                  <Text style={styles.teamName}>{match.awayTeam}</Text>
+                </View>
+                {match.score && (
+                  <Text style={styles.score}>
+                    {match.score.home} - {match.score.away}
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
+
         {/* Fichajes y Transferencias */}
         {transfers.length > 0 && (
           <View style={styles.section}>
@@ -171,6 +219,7 @@ export default function HomeScreen() {
                   <Text style={styles.transferTeam}>{transfer.toTeam}</Text>
                 </View>
                 <Text style={styles.transferAmount}>{transfer.amount}</Text>
+                <Text style={styles.transferSource}>Fuente: {transfer.source}</Text>
               </View>
             ))}
           </View>
@@ -181,7 +230,11 @@ export default function HomeScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Últimas Noticias</Text>
             {news.map((article) => (
-              <TouchableOpacity key={article.id} style={styles.newsCard}>
+              <TouchableOpacity 
+                key={article.id} 
+                style={styles.newsCard}
+                onPress={() => openArticle(article.url)}
+              >
                 <Image source={{ uri: article.urlToImage }} style={styles.newsImage} />
                 <View style={styles.newsContent}>
                   <Text style={styles.newsTitle} numberOfLines={2}>
@@ -199,6 +252,9 @@ export default function HomeScreen() {
             ))}
           </View>
         )}
+
+        {/* Espacio para la barra de navegación */}
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -275,6 +331,46 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
   },
+  matchCard: {
+    backgroundColor: 'rgba(26, 26, 46, 0.8)',
+    margin: 15,
+    padding: 15,
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#68cc8f',
+  },
+  matchHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  competition: {
+    fontSize: 12,
+    color: '#68cc8f',
+    fontWeight: 'bold',
+  },
+  matchDate: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.6)',
+  },
+  matchTeams: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  vs: {
+    fontSize: 14,
+    color: '#68cc8f',
+    fontWeight: 'bold',
+  },
+  score: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+  },
   transferCard: {
     backgroundColor: 'rgba(26, 26, 46, 0.8)',
     margin: 15,
@@ -323,6 +419,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#68cc8f',
+    marginBottom: 4,
+  },
+  transferSource: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontStyle: 'italic',
   },
   newsCard: {
     backgroundColor: 'rgba(26, 26, 46, 0.8)',
@@ -363,5 +465,8 @@ const styles = StyleSheet.create({
   newsDate: {
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.6)',
+  },
+  bottomSpacer: {
+    height: 80,
   },
 });

@@ -1,8 +1,6 @@
 import React, { useRef } from 'react';
-import { StyleSheet, Dimensions, View, Image } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { WebView } from 'react-native-webview';
-
-const { width, height } = Dimensions.get('window');
 
 interface WebViewWidgetProps {
   url?: string;
@@ -10,12 +8,12 @@ interface WebViewWidgetProps {
 
 export default function WebViewWidget({ url = 'https://futbol-total.uniguajira.com' }: WebViewWidgetProps) {
   const webViewRef = useRef<WebView>(null);
-  
-  const htmlContent = `
+
+  return (
     <View style={styles.container}>
       <View style={styles.bannerContainer}>
         <Image
-          source={require('../../img/logo_3-removebg-preview.png')}
+          source={require('../../assets/logo.png')}
           style={styles.bannerLogo}
           resizeMode="contain"
         />
@@ -27,10 +25,10 @@ export default function WebViewWidget({ url = 'https://futbol-total.uniguajira.c
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
-        scalesPageToFit={true}
+        scalesPageToFit={false}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={true}
-        allowsInlineMediaPlayback={true}
+        allowsInlineMediaPlaybook={true}
         mediaPlaybackRequiresUserAction={false}
         mixedContentMode="compatibility"
         thirdPartyCookiesEnabled={true}
@@ -62,50 +60,6 @@ export default function WebViewWidget({ url = 'https://futbol-total.uniguajira.c
         `}
       />
     </View>
-  `;
-
-  return (
-    <WebView
-        ref={webViewRef}
-        source={{ html: htmlContent }}
-        style={styles.webview}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        startInLoadingState={true}
-        scalesPageToFit={false}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        allowsInlineMediaPlayback={true}
-        mediaPlaybackRequiresUserAction={false}
-        mixedContentMode="compatibility"
-        thirdPartyCookiesEnabled={true}
-        sharedCookiesEnabled={true}
-        originWhitelist={['*']}
-        bounces={false}
-        overScrollMode="always"
-        contentInsetAdjustmentBehavior="automatic"
-        setSupportMultipleWindows={false}
-        allowFileAccess={true}
-        allowUniversalAccessFromFileURLs={true}
-        allowFileAccessFromFileURLs={true}
-        onLoadStart={() => console.log('Widget cargando...')}
-        onLoadEnd={() => console.log('Widget cargado')}
-        onError={(error) => console.log('Error en widget:', error)}
-        injectedJavaScript={`
-          // Ajustar el viewport para móvil
-          const meta = document.createElement('meta');
-          meta.name = 'viewport';
-          meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-          document.getElementsByTagName('head')[0].appendChild(meta);
-          
-          // Prevenir zoom accidental
-          document.addEventListener('gesturestart', function (e) {
-            e.preventDefault();
-          });
-          
-          true; // Requerido para que funcione el injectedJavaScript
-        `}
-      />
   );
 }
 
